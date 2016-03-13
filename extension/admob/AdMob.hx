@@ -18,7 +18,7 @@ class AdMob {
 
 	////////////////////////////////////////////////////////////////////////////
 
-	private static var lastTimeInterstitial:Int = -60*1000;
+	private static var lastTimeInterstitial:Int = 0;
 	private static var displayCallsCounter:Int = 0;
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -26,8 +26,15 @@ class AdMob {
 
 	public static function showInterstitial(minInterval:Int=60, minCallsBeforeDisplay:Int=0):String {
 		displayCallsCounter++;
-		if( (Lib.getTimer()-lastTimeInterstitial)<(minInterval*1000) ) return false;
-		if( minCallsBeforeDisplay > displayCallsCounter ) return false;
+		
+		var tooEarly:Bool = (Lib.getTimer() - lastTimeInterstitial) < (minInterval * 1000);
+		var notEnoughCalls:Bool = (displayCallsCounter < minCallsBeforeDisplay);
+		var showAd:Bool = (!tooEarly || !notEnoughCalls);
+		
+		if (!showAd) {
+			return "TOO_EARLY_OR_NOT_ENOUGH_CALLS";
+		}
+		
 		displayCallsCounter = 0;
 		lastTimeInterstitial = Lib.getTimer();
 		try{
