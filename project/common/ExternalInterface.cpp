@@ -46,7 +46,7 @@ DEFINE_ENTRY_POINT (admobex_main);
 
 
 static value admobex_interstitial_show(){
-	return alloc_bool(showInterstitial());
+	return alloc_string(showInterstitial());
 }
 DEFINE_PRIM(admobex_interstitial_show,0);
 

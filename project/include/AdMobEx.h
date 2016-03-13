@@ -9,7 +9,7 @@ namespace admobex {
 	void showBanner();
 	void hideBanner();
 	void refreshBanner();
-	bool showInterstitial();
+	const char *showInterstitial();
 	
 }
 

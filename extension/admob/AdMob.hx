@@ -12,7 +12,7 @@ class AdMob {
 	private static var __init:String->String->String->Bool->Void = function(bannerId:String, interstitialId:String, gravityMode:String, testingAds:Bool){};
 	private static var __showBanner:Void->Void = function(){};
 	private static var __hideBanner:Void->Void = function(){};
-	private static var __showInterstitial:Void->Bool = function(){ return false; };
+	private static var __showInterstitial:Void->String = function(){ return "JNI_EXCEPTION"; };
 	private static var __onResize:Void->Void = function(){};
 	private static var __refresh:Void->Void = function(){};
 
@@ -24,7 +24,7 @@ class AdMob {
 	////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
 
-	public static function showInterstitial(minInterval:Int=60, minCallsBeforeDisplay:Int=0):Bool {
+	public static function showInterstitial(minInterval:Int=60, minCallsBeforeDisplay:Int=0):String {
 		displayCallsCounter++;
 		if( (Lib.getTimer()-lastTimeInterstitial)<(minInterval*1000) ) return false;
 		if( minCallsBeforeDisplay > displayCallsCounter ) return false;
@@ -35,7 +35,7 @@ class AdMob {
 		}catch(e:Dynamic){
 			trace("ShowInterstitial Exception: "+e);
 		}
-		return false;
+		return "UNKNOWN_ERROR";
 	}
 	
 	public static function enableTestingAds() {
@@ -43,7 +43,7 @@ class AdMob {
 		if ( initialized ) {
 			var msg:String;
 			msg = "FATAL ERROR: If you want to enable Testing Ads, you must enable them before calling INIT!.\n";
-			msg+= "Throwing an exception to avoid displaying read ads when you want testing ads.";
+			msg+= "Throwing an exception to avoid displaying real ads when you want testing ads.";
 			trace(msg);
 			throw msg;
 			return;
@@ -60,7 +60,7 @@ class AdMob {
 			__init = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "init", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 			__showBanner = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "showBanner", "()V");
 			__hideBanner = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "hideBanner", "()V");
-			__showInterstitial = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "showInterstitial", "()Z");
+			__showInterstitial = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "showInterstitial", "()Ljava/lang/String;");
 			__onResize = openfl.utils.JNI.createStaticMethod("admobex/AdMobEx", "onResize", "()V");
 
 			__init(bannerId,interstitialId,(gravityMode==GravityMode.TOP)?'TOP':'BOTTOM',testingAds);
